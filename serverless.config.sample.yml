@@ -1,5 +1,5 @@
-twilio_sid: twilio_sid
-twilio_token: twilio_token
-twilio_from: +12345678910
+twilio_sid: 
+twilio_token: 
+twilio_from: 
 worker_rate: cron(*/10 * * * ? *)
 worker_enabled: true
