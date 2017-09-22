@@ -31,7 +31,7 @@ Create ```serverless.config.yml```
 cp serverless.config.sample.yml serverless.config.yml
 ```
 
-Edit ```serverless.config.yml``` and provide Twilio SID, Token and Sender Phone Number (must follow [Twilio phone format](https://support.twilio.com/hc/en-us/articles/223183008-Formatting-International-Phone-Numbers)).
+Edit ```serverless.config.yml``` and provide Twilio SID, Token and Sender Phone Number (must follow [Twilio phone number format](https://support.twilio.com/hc/en-us/articles/223183008-Formatting-International-Phone-Numbers)).
 
 ```
 twilio_sid: 
@@ -83,7 +83,7 @@ Alert fields:
 
 - ```"id": "6cd86d8f-1229-40e7-9aab-997cb2e065a8"``` [UUID](https://www.uuidgenerator.net/)
 - ```"name": "ETH-EUR 5%"``` Alert name
-- ```"mobile": "+12345678910"``` Receiver's phone number. Must follow [Twilio phone format](https://support.twilio.com/hc/en-us/articles/223183008-Formatting-International-Phone-Numbers).
+- ```"mobile": "+12345678910"``` Receiver's phone number. Must follow [Twilio phone number format](https://support.twilio.com/hc/en-us/articles/223183008-Formatting-International-Phone-Numbers).
 - ```"currencyPair": "ETH-EUR"``` [Coinbase currency pair](https://developers.coinbase.com/api/v2#exchange-rates)
 - ```"price": 300``` Base price. It will be updated with the new price when the alert is triggered.
 - ```"priceType": "buy"``` [Coinbase price type](https://developers.coinbase.com/api/v2#prices)
