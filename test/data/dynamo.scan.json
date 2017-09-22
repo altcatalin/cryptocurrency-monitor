@@ -1,0 +1,25 @@
+{
+    "Items": [
+        {
+            "id": "6cd86d8f-1229-40e7-9aab-997cb2e065a8",
+            "name": "ETH-EUR 5%",
+            "mobile": "+12345678910",
+            "currencyPair": "ETH-EUR",
+            "price": 300,
+            "priceType": "buy",
+            "percent": 5
+        },
+        {
+            "id": "70a4f1d5-3f24-41d0-9a73-d48ecf42d478",
+            "name": "ETH-USD 5%",
+            "mobile": "+12345678910",
+            "currencyPair": "ETH-USD",
+            "price": 300,
+            "priceType": "buy",
+            "percent": 5
+        }
+    ],
+    "LastEvaluatedKey": {
+        "id": "70a4f1d5-3f24-41d0-9a73-d48ecf42d478"
+    }
+}

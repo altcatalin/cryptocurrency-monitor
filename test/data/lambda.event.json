@@ -1,0 +1,9 @@
+{
+    "Records": [
+        {
+            "Sns": {
+                "Message": "{\"id\":\"6cd86d8f-1229-40e7-9aab-997cb2e065a8\",\"name\":\"ETH-EUR 5%\",\"mobile\":\"+12345678910\",\"currencyPair\":\"ETH-EUR\",\"price\":300,\"priceType\":\"buy\",\"percent\":5}"
+            }
+        }
+    ]
+}

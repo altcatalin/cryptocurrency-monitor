@@ -1,0 +1,13 @@
+{
+    "extends": "airbnb-base",
+    "plugins": [
+        "import"
+    ],
+    "rules": {
+        "indent": 0,
+        "max-len": ["error", 120]
+    },
+    "env": {
+        "mocha": true
+    }
+}

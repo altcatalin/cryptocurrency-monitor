@@ -1,0 +1,169 @@
+service: cryptocurrency-monitor
+
+provider:
+  name: aws
+  runtime: nodejs6.10
+  versionFunctions: false
+
+custom: ${file(./serverless.config.yml)}
+
+package:
+  individually: true
+  exclude:
+    - ./**
+
+functions:
+  Worker:
+    handler: src/worker/index.handler
+    name: ${self:service}-worker-${self:provider.stage}
+    memorySize: 128
+    timeout: 60
+    role: Role
+    environment:
+      TOPIC: 
+        Ref: Topic
+      TABLE_NAME:
+        Ref: Table
+    package:
+      include:
+        - src/worker/**
+    events:
+      -
+        schedule:
+          name: ${self:service}-worker-${self:provider.stage}
+          rate: ${self:custom.worker_rate}
+          enabled: ${self:custom.worker_enabled}
+
+  Consumer:
+    handler: src/consumer/index.handler
+    name: ${self:service}-consumer-${self:provider.stage}
+    memorySize: 128
+    timeout: 3
+    role: Role
+    environment:
+      TWILIO_SID: ${self:custom.twilio_sid}
+      TWILIO_TOKEN: ${self:custom.twilio_token}
+      TWILIO_FROM: ${self:custom.twilio_from}
+      TABLE_NAME:
+        Ref: Table
+    package:
+      include:
+        - src/consumer/**
+    events:
+      - 
+        sns: 
+          arn:
+            Fn::Join:
+              - ":"
+              -
+                - "arn:aws:sns"
+                - Ref: "AWS::Region"
+                - Ref: "AWS::AccountId"
+                - ${self:service}-${self:provider.stage}
+          topicName: ${self:service}-${self:provider.stage}
+
+resources:  # CloudFormation template syntax
+  Resources:
+
+    # DynamoDb
+    Table:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:service}-${self:provider.stage}
+        AttributeDefinitions:
+          -
+            AttributeName: id
+            AttributeType: S
+        KeySchema:
+          -
+            AttributeName: id
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 5
+          WriteCapacityUnits: 5
+
+    # SNS
+    Topic:
+      Type: AWS::SNS::Topic
+      Properties:
+        TopicName: ${self:service}-${self:provider.stage}
+
+    # IAM
+    Role:
+      Type: AWS::IAM::Role
+      Properties:
+        Path: /
+        RoleName: ${self:service}-${self:provider.stage}
+        AssumeRolePolicyDocument:
+          Version: "2012-10-17"
+          Statement:
+            -
+              Effect: Allow
+              Principal:
+                Service:
+                  - lambda.amazonaws.com
+              Action: sts:AssumeRole
+        Policies:
+          -
+            PolicyName: ${self:service}-${self:provider.stage}
+            PolicyDocument:
+              Version: "2012-10-17"
+              Statement:
+                -
+                  Effect: Allow
+                  Action:
+                    - logs:CreateLogGroup
+                    - logs:CreateLogStream
+                    - logs:PutLogEvents
+                  Resource:
+                    Fn::Join:
+                      - ":"
+                      -
+                        - "arn:aws:logs"
+                        - Ref: "AWS::Region"
+                        - Ref: "AWS::AccountId"
+                        - "log-group:/aws/lambda/*:*:*"
+                -
+                  Effect: Allow
+                  Action:
+                    - dynamodb:UpdateItem
+                    - dynamodb:Scan
+                  Resource:
+                    Fn::Join:
+                      - ":"
+                      -
+                        - "arn:aws:dynamodb"
+                        - Ref: "AWS::Region"
+                        - Ref: "AWS::AccountId"
+                        - Fn::Join:
+                          - ""
+                          -
+                            - "table/"
+                            - Ref: Table
+                -
+                  Effect: Allow
+                  Action:
+                    - sns:Publish
+                  Resource:
+                    Ref: Topic
+    
+  # Output
+  Outputs:
+    Region:
+      Value: ${self:provider.region}
+    Stage:
+      Value: ${self:provider.stage}
+    TwilioFrom:
+      Value: ${self:custom.twilio_from}
+    TwilioSid:
+      Value: ${self:custom.twilio_sid}
+    TwilioToken:
+      Value: ${self:custom.twilio_token}
+    Table:
+      Value:
+        Ref: Table
+    Topic:
+      Value:
+        Fn::GetAtt:
+          - Topic
+          - TopicName
